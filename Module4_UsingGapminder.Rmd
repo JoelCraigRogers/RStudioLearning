@@ -1,0 +1,46 @@
+---
+title: "Using Gapminder"
+output: html_notebook
+---
+#4.2 Gapminder
+##Faceting
+```{r}
+library(dslabs)
+library(dplyr)
+library(tidyverse)
+data(gapminder)
+filter(gapminder, year %in% c(1962 , 2012)) %>%
+  ggplot(aes(x = fertility, y= life_expectancy, col = continent))+
+  geom_point() +
+  facet_grid(continent~year)
+
+
+```
+This shows the gapminder data using the grid facet.  
+
+Now we will look at the same data using only the continent or year
+```{r}
+library(dslabs)
+library(tidyverse)
+data("gapminder")
+filter(gapminder , year %in% c(1962, 2012)) %>%
+  ggplot(aes(x = fertility, y = life_expectancy , col = continent)) +
+  geom_point () +
+  facet_grid(.~year)
+
+filter(gapminder , year %in% c(1962 , 2012)) %>%
+  ggplot(aes(x = fertility , y = life_expectancy, col = continent)) +
+  geom_point() +
+  facet_grid(year~.)
+```
+FAcet by year withy multiple rows to show the change over time
+```{r}
+years <- c(1962 , 1980 , 1990 , 2000 , 2012)
+continents <- c("Europe" , "Asia")
+gapminder %>%
+  filter(year %in% years & continent %in% continents) %>%
+  ggplot(aes(fertility, life_expectancy, col = continent)) +
+  geom_point() +
+  facet_wrap(~year)
+```
+
