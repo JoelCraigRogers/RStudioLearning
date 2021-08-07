@@ -43,4 +43,146 @@ gapminder %>%
   geom_point() +
   facet_wrap(~year)
 ```
+##Time Series Plots Video
+This may be useful for the SITS work.  
+Time will be the X=Axis and Y will be the variable of interest. 
+geom_line function ccan be used.
+Best to lable the curve over using a legend.  
+ABA seems to prefer the legend.
+```{r}
+#Display as point
+gapminder %>% 
+  filter(country == "United States") %>%
+  ggplot(aes(x = year, y = fertility)) +
+  geom_point()
+
+# Now we will show that same data as a line graph
+gapminder %>%
+  filter(country =="United States") %>%
+  ggplot(aes(x = year, y = fertility)) +
+  geom_line()
+
+
+```
+We can also code multiple series of data on the same graph to compare them.
+```{r}
+countries2 <- c("Germany" , "South Korea")
+
+gapminder %>%
+  filter(country %in% countries2) %>%
+  ggplot(aes(year, fertility , group = country, col = country)) +
+           geom_line()
+           
+```
+##Transformations Video
+We will look at the GDP in the Gapminder dataset
+It may be useful to present the data baed on the level of poverty across the population.
+```{r}
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data("gapminder")
+# Create the dollars per day variable
+gapminder <- gapminder%>%
+  mutate(dollars_per_day = gdp/population/365)
+# Show the histogram for dollars per day
+past_year <- 1970
+gapminder %>%
+  filter(year == past_year & !is.na(gdp)) %>%
+  ggplot(aes(x = dollars_per_day)) +
+  geom_histogram(binwidth = 1, color = "black")
+
+
+```
+This histogram shows tht most of the countries live under $10 per day.
+
+log transformations - convert a multiplicative increases to additive increases.  
+(Not sure what that means)
+When the value doubles, the log increases by 1.
+```{r}
+gapminder %>%
+  filter(year == past_year & !is.na(gdp)) %>% # this will filter the data by year and eliminate blanks
+  ggplot(aes(log2(x = dollars_per_day))) +
+  geom_histogram(binwidth = 1, color = "black") 
+  
+```
+This shows the 2 modes of the distribution of data.  
+One at about 2 dollars per day, one at about 8 per day.  
+Using the base 2 log means we can always use the bin width of 1.
+For larger numbers we can use log base 10.
+For example populations would better display with logbase10
+scale_x_continuious will scale the axis instead of transforming the data.  
+```{r}
+gapminder %>%
+  filter(year== past_year & !is.na(gdp)) %>%
+  ggplot(aes(x = dollars_per_day)) +
+  geom_histogram(binwidth = 1 , color = "black") +
+  scale_x_continuous(trans = "log2")
+```
+This is the same information and the same graph, just created slightly differently by 
+scaling the axis instead of the data.
+##Data Transformations Textbook 9.5
+Lets look at the population information.  This is large enough that logbase10 may be the better option. 
+```{r}
+filter(gapminder, year == past_year) %>%
+  summarize(min = min(population), max = max(population))
+
+```
+
+```{r}
+gapminder %>%
+  filter(year == past_year) %>%
+  ggplot(aes(log10(population))) +
+  geom_histogram(binwidth = 0.5, color = "black")
+```
+##Textbook 9.6 Visualizing multimodal distributions
+Typical distributions of data will follow a single curve and have a single mode.  
+Often data will have multiole bumps in the data depending on the distribution. 
+##4.2 Stratify and Boxplot Video
+The histogram shows two bumps in the income, but does not show the regions or other information. 
+Presenting multiple boxplots together can compare the data. '
+How many regions are in the gapminder data?
+```{r}
+length(levels(gapminder$region))
+```
+There are 22 regions. 
+First lets create a boxplot to show the distributions.
+```{r}
+past_year <- 1970
+# To make things easy we will create an object for the boxplot
+p <- gapminder %>%
+  filter(year == past_year & !is.na(gdp)) %>%
+  ggplot(aes(region, dollars_per_day))
+# now we use p and change it
+p +
+  geom_boxplot()
+```
+This is difficult to read so lets alter the axis lables
+```{r}
+p +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+That is easier to read
+Now lets use reorder to organize the data a little better
+```{r}
+fac <- factor(c("Asia" , "Asia" , "West" , "West" , "West"))
+levels(fac)
+value <- c(10 , 11 , 12 , 6 , 4)
+fac <- reorder(fac, value, FUN = mean)
+levels(fac)
+
+p <- gapminder %>%
+  filter(year == past_year & !is.na(gdp)) %>%
+  mutate(region = reorder(region , dollars_per_day , FUN = median)) %>%
+  ggplot(aes(region , dollars_per_day , fill = continent)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45 , hjust = 1)) +
+  xlab("")
+p
+#We can also present these as log scale
+p +
+  scale_y_continuous(trans = "log2")
+p
+```
 
