@@ -1,0 +1,75 @@
+---
+title: "Module 5"
+output: html_notebook
+---
+#Module 5 Data Visualization Principles
+This module we will review general principles for effective data visualization. 
+##Introduction
+Humans detect patterns and use those patterns to make decisions.  It is important that we display the data in a way that fits with how the people who read it understand.  
+Match the presentation to the audience.  
+  A general audience may need a different or less complex display than experts familiar with viewing complex presentations. 
+##Chapter 10:  Data Visualization
+Much of the code we based these on is available from the GitHub repository.
+Will add the link at the botton. 
+##Encoding Data Using Visual cues
+Principles for Data Visualization:
+  Position
+  Aligned Length
+  Angles
+  Area
+  Brightness
+  Color Hue
+
+Pie Charts - Popular way to display data in percentages. 
+  May not be the best way to display the data.
+  Represents Areas and Angles to display the data
+  Showing the numbers may be a less confusing way.
+  Barplot may be the best option to display the data.  
+  If you must make a pie chart add the % to the output
+  
+##Know When to Include Zero
+If you do not show the graph from 0 it can misrepresent the data.  
+  It will make small changes appear larger since it only shows the change, not the whole.
+  Often used by politicians to sway the opinion of the public.  
+  If you use Length to represent data it is critical to start from 0 so that the data is accurately presented.  
+  
+When using position (not length) it may not be needed to include the 0.
+  Can eliminate blocks that have no data and allow you to increase the size of the area with data. 
+
+##Do not distort quantities
+Also commonly used by politicians when they display data.  
+Using shapes to present the data can distort the actual data. 
+ggplot defaults to use area which creates less distortion.  
+  using radius will cause the area to inaccurately scale. 
+Often using images that change in size is not the most accurate way to compare. 
+  Position and length are usually better to represent data
+  
+##Order by a meaningful value
+Displaying ordered by alphabetical order may not be the most meaningful.  
+The reorder function can help us meaningful presentation.  
+```{r}
+library(tidyverse)
+library(dslabs)
+data("murders")
+
+murders %>% mutate(murder_rate = total/population*1000000) %>%
+  #mutate(state = reorder(state , murder_rate)) %>%
+  ggplot(aes(x = state, y = murder_rate)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme(axis.text.y = element_text(size = 6)) +
+  xlab("")
+# Compare to
+murders %>% mutate(murder_rate = total / population*1000000) %>%
+  mutate(state = reorder(state , murder_rate)) %>%
+  ggplot(aes(x = state, y = murder_rate)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme(axis.text.y = element_text(size = 6)) +
+  xlab("")
+  
+
+```
+##5.2 Data Visualization Principles: Part 2
+  
+  
