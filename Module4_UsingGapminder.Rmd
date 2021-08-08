@@ -186,3 +186,9 @@ p +
 p
 ```
 
+##Video Ecological Fallacy
+We must ensure that the data we present is accurately displaying the information or we can make poor decisions.  
+Ecological Fallacy - When we assume that the average applies equally to everyone in the group.  
+
+Logistic Transformation calculates the odds of a particular outcome using standard statistics. 
+
