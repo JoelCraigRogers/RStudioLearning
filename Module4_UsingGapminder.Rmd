@@ -182,7 +182,7 @@ p <- gapminder %>%
 p
 #We can also present these as log scale
 p +
-  scale_y_continuous(trans = "log2")
+  scale_y_continuous(trans = "log2"local)
 p
 ```
 
