@@ -71,5 +71,90 @@ murders %>% mutate(murder_rate = total / population*1000000) %>%
 
 ```
 ##5.2 Data Visualization Principles: Part 2
+## Show the Data
+Common way to compare groups is the standard error and the average. 
+This can misrepresent the dataset:
+  Does not show the distribution
+  With the heights dataset it goes from 0.  This could impply there are 0inch tall people
+```{r}
+library(dslabs)
+library(tidyverse)
+library(dplyr)
+data(heights)
+
+heights %>% 
+  ggplot(aes(sex,height )) +
+  geom_point()
+```
+This point plot shows the distribution of the heights, without implying there are additional data where no points actually lay, such as 0.
+For a large dataset this may not always be clear. 
+  jitter and alpha blending can help display this data
+  geom_jitter (geometry) widens out the points.  This allows more points to be visible without placing points on top of each other. 
+    alpha blending darkens the area with the highest density of points.  Lighter areas are less dense.  
   
+```{r}
+heights %>% ggplot(aes(x = sex , y = height)) +
+  geom_jitter(width = .1 , alpha = .2)
+
+heights %>% ggplot(aes(sex , height)) +
+  geom_jitter(width = .1)
+```
+##Use common axis
+Align plots vertically to show horizontal changes
+Align graphs horizontally to show vertical changes. 
+```{r}
+heights %>% ggplot(aes(height , ..density..)) +
+  geom_histogram(binwidth = 1 , color = "black") +
+  facet_grid(sex~.)
+##
+heights %>% 
+  ggplot(aes(sex, height)) +
+  geom_boxplot(coef= 3) +
+  geom_jitter(width = .1, alpha = .2) +
+  ylab("Height(inches)")
+
+```
+##Consider Transformations
+Log transformations may make data more representative.
+##Compared visual cues should be adjacent. 
+Alphabetically may not always be the best way to compare the data. 
+##Slope charts
+Scatterplots are generally good to compare two data points. 
+Slope charts may be useful when there are a small number of points. 
+  Slope charts get cluttered if there are many points. 
+Bland Altman plot - Shows the difference vs the average
+```{r}
+library(tidyverse)
+library(dslabs)
+data("gapminder")
+#Create regions
+west <- c("Western Europe" , "Northern Europe" , "Southern Europe" , "North America" ,
+          "Australia and New Zealand")
+dat <- gapminder %>%
+  filter(year %in% c(2010, 2015) & region %in% west & !is.na(life_expectancy) & population > 10^7)
+
+dat %>%
+  mutate(location = ifelse(year ==2010, 1 , 2),
+         location = ifelse(year == 2015 & country %in% c("United Kingdom" , "Portugal"),
+                           location + .22 , location) ,
+         hjust = ifelse(year == 2010 , 1 , 0)) %>%
+  mutate(year = as.factor(year)) %>%
+  ggplot(aes(year , life_expectancy , group = country)) +
+  geom_line(aes(color = country) , show.legend = FALSE) +
+  geom_text(aes(x = location , label = country , hjust = hjust), show.legend = FALSE) +
+  xlab("") +
+  ylab("Life Expectancy")
   
+         
+
+```
+##Encoding a third variable
+RColorBrewer can bring in more color display options
+These diverging color options can present the different magnitudes of a value. 
+
+```{r}
+library(RColorBrewer)
+display.brewer.all(type="seq")
+display.brewer.all(type = "div")
+```
+
