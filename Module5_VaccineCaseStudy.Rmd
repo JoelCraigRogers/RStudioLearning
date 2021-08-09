@@ -52,4 +52,8 @@ dat %>% ggplot(aes(year , state, fill= rate)) +
   
   
 ```
+Line plot of measles rate by year and state
+```{r}
+
+```
 
