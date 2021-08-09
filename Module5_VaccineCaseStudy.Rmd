@@ -1,0 +1,55 @@
+---
+title: "Module 5 Case Study:Vaccines"
+output: html_notebook
+---
+Fear mongering and consparicies have led to a reduction in vaccines in some parts of the world. 
+Effectively communicating our data can help spread our message. 
+Tyco Project - Records data on 7 infectious diseases over several decades
+It is included with dslabs. 
+```{r}
+library(dslabs)
+data("us_contagious_diseases")
+str(us_contagious_diseases)
+#Show the data structure
+
+```
+For colors:
+Sequential color display if there is not a meaningful center
+Divergent - showing the relation to the center value
+```{r}
+library(tidyverse)
+library(dslabs)
+data("us_contagious_diseases")
+the_disease <-"Measles"
+dat <- us_contagious_diseases %>%
+  filter(!state %in% c("Hawaii" , "Alaska") & disease == the_disease) %>% #were not states through the entire reporting period
+  mutate(rate = count /population*10000 * 52/weeks_reporting) %>%
+  mutate(state = reorder(state, rate))
+
+# Now plot california disease rates
+dat %>% filter(state == "California" & !is.na(rate)) %>%
+  ggplot(aes(year, rate)) +
+  geom_line() +
+  ylab("Cases per 10,000") +
+  geom_vline(xintercept = 1963 , col = "blue")
+#Phase change line was added in 1963 because of the introduction of the measles vaccine
+
+```
+Now lets use a tile plot to show the disease by state and year
+```{r}
+dat %>% ggplot(aes(year , state, fill= rate)) +
+  geom_tile(color = "grey50") +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9,"Reds") , trans = "sqrt") +
+  geom_vline(xintercept = 1963, col = "blue") +
+  theme_minimal() +
+  theme(panel.grid = element_blank()) +
+  ggtitle(the_disease) +
+  ylab("") +
+  xlab("")
+
+
+  
+  
+```
+
