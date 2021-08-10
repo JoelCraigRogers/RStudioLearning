@@ -52,7 +52,15 @@ dat %>% ggplot(aes(year , state, fill= rate)) +
   
   
 ```
-Line plot of measles rate by year and state
+##Avoid unneeded 3D data
+This makes specific comparison difficult and it is difficult to read actual data.
+Often the third dimension is not representative of any data.  
+
+
+##Avoid too many significant digits.
+R defaults to 7 significant digits.  This can be difficult to read.  2 - 4 should be plenty for most data.
+When generating tables place what is being compared in columns rather than in rows.  
+
 ```{r}
 
 ```
